@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+        <link rel="stylesheet" href="style.css">
+        <title>Pomodoro App</title>
+    </head>
+    <body>
+        <div class="app-container">
+            <div class="app-state">
+                <button id="pomodoro">Pomodoro</button>
+                <button id="short-break">Short Break</button>
+                <button id="long-break">Long Break</button>
+            </div>
+            <div class="pomodoro-state">
+                <p id="circle-1"><i class="fa-regular fa-circle"></i></p>
+                <p id="circle-2"><i class="fa-regular fa-circle"></i></p>
+                <p id="circle-3"><i class="fa-regular fa-circle"></i></p>
+                <p id="circle-4"><i class="fa-regular fa-circle"></i></p>
+            </div>
+            <div class="timer">
+                <div class="timer-display">
+                    <p><span id="minutes">25</span>:<span id="seconds">00</span></p>
+                </div>
+                <div class="timer-buttons">
+                    <button id="start-pause">Start</button>
+                    <button id="reset"><i class="fa-solid fa-rotate-right"></i></button>
+                    <!--<button id="skip"><i class="fa-solid fa-forward-step"></i></button>
+                    <button id="settings">Settings</button> -->
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="app.js"></script>
+</html>
