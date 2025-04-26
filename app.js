@@ -6,9 +6,11 @@ const resetButton = document.getElementById('reset');
 const pomodoroButton = document.getElementById('pomodoro');
 const shortBreakButton = document.getElementById('short-break');
 const longBreakButton = document.getElementById('long-break');
-const pomodoroTime = 25;
-const shortBreakTime = 5;
-const longBreakTime = 15;
+const skipButton = document.getElementById('skip');
+let pomodoroTime = 25;
+let shortBreakTime = 5;
+let longBreakTime =  15;
+const saveButton = document.getElementById('save-settings');
 
 const circle1 = document.getElementById('circle-1');
 const circle2 = document.getElementById('circle-2');
@@ -21,6 +23,28 @@ let isRunning = false;
 let state = 'pomodoro';
 let nbPomodoro = 0;
 
+const timeSettings = () => {
+    const pomodoroInput = document.getElementById('pomodoro-length').value;
+    const shortBreakInput = document.getElementById('short-break-length').value;
+    const longBreakInput = document.getElementById('long-break-length').value;
+
+    pomodoroTime = Number.parseInt(pomodoroInput);
+    shortBreakTime = Number.parseInt(shortBreakInput);
+    longBreakTime = Number.parseInt(longBreakInput);
+
+    if (isNaN(pomodoroTime) || isNaN(shortBreakTime) || isNaN(longBreakTime)) {
+        alert('Please enter valid numbers for the time settings.');
+        return false; // Indicate failure
+    }
+    if (pomodoroTime < 1 || shortBreakTime < 1 || longBreakTime < 1) {
+        alert('Please enter positive numbers for the time settings.');
+        return false; // Indicate failure
+    }
+
+    return true; // Indicate success
+};
+
+
 const setState = (newState) => {
     state = newState;
     switch (state) {
@@ -29,6 +53,7 @@ const setState = (newState) => {
             pomodoroButton.classList.add('active');
             shortBreakButton.classList.remove('active');
             longBreakButton.classList.remove('active');
+            resetPomodoroState();
             break;
         case 'short-break':
             initialMinutes = shortBreakTime;
@@ -41,6 +66,7 @@ const setState = (newState) => {
             pomodoroButton.classList.remove('active');
             shortBreakButton.classList.remove('active');
             longBreakButton.classList.add('active');
+            circle4.innerHTML = '<i class="fa-solid fa-circle"></i>';
             break;
     }
     resetTimer();
@@ -93,6 +119,22 @@ const startTimer = () => {
     , 1000);
 };
 
+const skipToNextState = () => {
+    clearInterval(myInterval);
+    if (state === 'pomodoro') {
+        nbPomodoro++;
+        pomodoroState();
+        if (nbPomodoro % 4 === 0) {
+            setState('long-break');
+        } else {
+            setState('short-break');
+        }
+    } else {
+        setState('pomodoro');
+    }
+
+};
+
 const pomodoroState = () => {
     if (nbPomodoro % 4 === 1) {
         circle1.innerHTML = '<i class="fa-solid fa-circle"></i>';
@@ -103,14 +145,14 @@ const pomodoroState = () => {
     } else if (nbPomodoro % 4 === 0) {
         circle4.innerHTML = '<i class="fa-solid fa-circle"></i>';
     }
-}
+};
 
 const resetPomodoroState = () => {
-    circle1.innerHTML = '<i class="fa-solid fa-circle"></i>';
-    circle2.innerHTML = '<i class="fa-solid fa-circle"></i>';
-    circle3.innerHTML = '<i class="fa-solid fa-circle"></i>';
-    circle4.innerHTML = '<i class="fa-solid fa-circle"></i>';
-}
+    circle1.innerHTML = '<i class="fa-regular fa-circle"></i>';
+    circle2.innerHTML = '<i class="fa-regular fa-circle"></i>';
+    circle3.innerHTML = '<i class="fa-regular fa-circle"></i>';
+    circle4.innerHTML = '<i class="fa-regular fa-circle"></i>';
+};
 
 startButton.addEventListener('click', () => {
     if (isRunning) {
@@ -133,3 +175,54 @@ resetButton.addEventListener('click', () => {
 pomodoroButton.addEventListener('click', () => setState('pomodoro'));
 shortBreakButton.addEventListener('click', () => setState('short-break'));
 longBreakButton.addEventListener('click', () => setState('long-break'));
+skipButton.addEventListener('click', () => {
+    skipToNextState();
+    startButton.textContent = 'Start';
+    isRunning = false;
+    toggleStateButtons(false);
+});
+
+const settingsButton = document.getElementById('settings');
+
+saveButton.addEventListener('click', () => {
+    if (!timeSettings()) {
+        return; 
+    }
+
+    // Update the timer with the new settings
+    if (state === 'pomodoro') {
+        initialMinutes = pomodoroTime;
+    } else if (state === 'short-break') {
+        initialMinutes = shortBreakTime;
+    } else if (state === 'long-break') {
+        initialMinutes = longBreakTime;
+    }
+
+    totalSeconds = initialMinutes * 60;
+    updateTimerDisplay();
+
+    // Close the sidebar after saving settings
+    const sidebar = document.getElementById('setting-sidebar');
+    sidebar.classList.remove('show');
+    settingsButton.style.backgroundColor = 'transparent';
+    settingsButton.style.color = '#fff';
+});
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('setting-sidebar');
+
+    const sidebarisOpen = sidebar.classList.toggle('show');
+
+    if (sidebarisOpen) {
+        settingsButton.style.backgroundColor = '#fff';
+        settingsButton.style.color = '#000';
+    } else {
+        settingsButton.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+        settingsButton.style.color = '#fff';
+    }
+}
+
+settingsButton.addEventListener('click', toggleSidebar);
+
+
+
