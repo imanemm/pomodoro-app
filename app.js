@@ -1,21 +1,26 @@
 const bells = new Audio('audio/happy_bells.wav');
+bells.load();
+
 const minutesDiv = document.getElementById('minutes');
 const secondsDiv = document.getElementById('seconds');
+
 const startButton = document.getElementById('start-pause');
 const resetButton = document.getElementById('reset');
 const pomodoroButton = document.getElementById('pomodoro');
 const shortBreakButton = document.getElementById('short-break');
 const longBreakButton = document.getElementById('long-break');
 const skipButton = document.getElementById('skip');
-let pomodoroTime = 25;
-let shortBreakTime = 5;
-let longBreakTime =  15;
 const saveButton = document.getElementById('save-settings');
+
 
 const circle1 = document.getElementById('circle-1');
 const circle2 = document.getElementById('circle-2');
 const circle3 = document.getElementById('circle-3');
 const circle4 = document.getElementById('circle-4');
+
+let pomodoroTime = 25;
+let shortBreakTime = 5;
+let longBreakTime =  15;
 
 let myInterval;
 let totalSeconds = Number.parseInt(minutesDiv.textContent) * 60;
@@ -100,6 +105,13 @@ const startTimer = () => {
         updateTimerDisplay();
 
         if (totalSeconds <= 0) {
+            console.log('Playing bell sound');
+            bells.play().catch((error) => {
+                console.error('Audio playback permission denied', error);
+            });
+
+            clearInterval(myInterval);
+
             if (state === 'pomodoro') {
                 nbPomodoro++;
                 pomodoroState();
@@ -112,8 +124,7 @@ const startTimer = () => {
             } else {
                 setState('pomodoro');
             }
-            clearInterval(myInterval);
-            bells.play();
+            startTimer();
         }
     }
     , 1000);
@@ -155,6 +166,13 @@ const resetPomodoroState = () => {
 };
 
 startButton.addEventListener('click', () => {
+    if (!isRunning) {
+        bells.play().catch((error) => {
+            console.error('Audio playback permission denied', error);
+        });
+        bells.pause();
+        bells.currentTime = 0;
+    }
     if (isRunning) {
         clearInterval(myInterval);
         startButton.textContent = 'Start';
