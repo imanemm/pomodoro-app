@@ -200,37 +200,3 @@ input {
         gap: 30px;
     }
 }
-
-@media screen and (max-width: 812px) and (max-height: 375px) and (orientation: landscape) {
-    body {
-        background-color: red !important;
-    }
-    .timer-display {
-        font-size: 80px !important;
-        margin: 0;
-    }
-
-    .pomodoro-state {
-        font-size: 14px !important;
-    }
-
-    button {
-        font-size: 14px;
-        padding: 5px 10px;
-    }
-
-    input {
-        font-size: 14px;
-        padding: 5px;
-    }
-
-    .setting-sidebar-body {
-        gap: 5px;
-    }
-    .app-container {
-        max-height: 100vh !important;
-        width: 100vw !important;
-        flex-direction: column;
-        justify-content: center;
-    }
-}
