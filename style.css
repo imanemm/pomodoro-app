@@ -2,6 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    border: red solid 1px;
 }
 
 body {
@@ -10,7 +11,7 @@ body {
     /*background-image: url('./images/background-op1.jpg'); */
     transition: background-image 0.5s ease-in-out;
     background-size: cover;
-    background-position: top-center;
+    background-position: center;
     background-attachment: fixed;
     color: #fff;
     box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
@@ -114,13 +115,13 @@ label {
 input, select {
     font-family: 'Sour Gummy', sans-serif;
     font-size: 16px;
-    padding: 10px ;
+    padding: 0;
     border-radius: 15px;
     border: 2px solid #fff;
     background-color: rgba(0, 0, 0, 0.3);
     color: #fff;
-    width: 100%;
-    text-align: right;
+    width: 50%;
+    text-align: left;
 }
 
 @media screen and (max-width: 768px) {
@@ -153,6 +154,93 @@ input, select {
 
     .setting-sidebar-body {
         gap: 10px;
+    }
+}
+
+@media screen and (max-width: 812px) and (max-height: 375px) and (orientation: landscape) {
+    body {
+        font-size: 18px;
+        background-color: rgba(0, 0, 0, 0.9); /* Optional: Adjust background color */
+    }
+
+    .timer-display {
+        font-size: 120px;
+    }
+
+    .pomodoro-state {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+
+    input, select {
+        font-size: 14px;
+        padding: 5px;
+    }
+
+    .setting-sidebar-body {
+        gap: 10px;
+    }
+}
+
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+    #setting-sidebar {
+        width: 100%;
+        left: -100%;
+        background-color: rgba(0, 0, 0, 1);
+    }
+
+    #setting-sidebar.show {
+        left: 0;
+    }
+
+    body {
+        font-size: 24px;
+    }
+
+    .timer {
+        padding: 0px
+    }
+
+    .timer-display {
+        padding: 0px;
+        font-size: 100px;
+    }
+
+    .pomodoro-state {
+        font-size: 20px;
+    }
+
+    .setting-sidebar-body {
+        flex-direction: row;
+    }
+
+    button {
+        margin : 0;
+        padding: 10px 20px;
+    }
+
+    input {
+        font-size: 20px;
+        padding: 10px;
+        width: 50%;
+    }
+
+    label {
+        font-size: 24px !important;
+    }
+
+    select {
+        font-size: 24px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .setting-sidebar-body {
+        gap: 20px;
     }
 }
 
