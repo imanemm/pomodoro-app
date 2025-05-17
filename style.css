@@ -7,7 +7,8 @@
 body {
     font-family: 'Sour Gummy', sans-serif;
     font-size: 24px;
-    background-image: url('./images/background-op1.jpg');
+    /*background-image: url('./images/background-op1.jpg'); */
+    transition: background-image 0.5s ease-in-out;
     background-size: cover;
     background-position: top-center;
     background-attachment: fixed;
@@ -104,10 +105,16 @@ button.active {
     width: 100%;
 }
 
-input {
+label {
     font-family: 'Sour Gummy', sans-serif;
-    font-size: 24px;
-    padding: 10px;
+    font-size: 24px !important;
+    color: #fff;
+}
+
+input, select {
+    font-family: 'Sour Gummy', sans-serif;
+    font-size: 16px;
+    padding: 10px ;
     border-radius: 15px;
     border: 2px solid #fff;
     background-color: rgba(0, 0, 0, 0.3);

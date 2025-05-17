@@ -44,6 +44,20 @@
                     <br>
                     <input type="number" id="long-break-length" value="15" min="1" max="60">
                 </div>
+                <div class="setting-item">
+                    <label for="bg-image">Choose a background image <span aria-hidden="true">🎨</span> :</label>
+                    <br>
+                    <select name="bg-image" id="bg-image" onchange="backgroundImageSelector()">
+                        <option value="painting">Painting</option>
+                        <option value="flying-home">Flying Home</option>
+                        <option value="traditional-home">Traditional Home</option>
+                        <option value="sea">Sea</option>
+                        <option value="country-home">Country Home</option>
+                        <option value="moon">Moon</option>
+                        <option value="forest">Forest</option>
+                        <option value="train">Train</option>
+                    </select>
+                </div>
             </div>
             <div class="setting-sidebar-footer">
                 <button id="save-settings">Save</button>

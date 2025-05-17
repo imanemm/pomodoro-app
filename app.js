@@ -28,6 +28,9 @@ let isRunning = false;
 let state = 'pomodoro';
 let nbPomodoro = 0;
 
+const defaultBackground = 'url("ghibli-bg/painting.jpg")';
+document.body.style.backgroundImage = defaultBackground;
+
 const timeSettings = () => {
     const pomodoroInput = document.getElementById('pomodoro-length').value;
     const shortBreakInput = document.getElementById('short-break-length').value;
@@ -242,5 +245,42 @@ function toggleSidebar() {
 
 settingsButton.addEventListener('click', toggleSidebar);
 
+const backgroundImageSelector = () => {
+    const backgroundElement = document.body;
 
+    let selectedImage = document.querySelector('select[name="bg-image"]').value;
+    switch (selectedImage) {
+        case 'country-home':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/country-home.jpg")';
+            break;
+        case 'flying-home':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/flying-home.jpg")';
+            break;
+        case 'forest':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/forest.jpg")';
+            break;
+        case 'moon':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/moon.jpg")';
+            break;
+        case 'painting':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/painting.jpg")';
+            break;
+        case 'sea':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/sea.jpg")';
+            break;
+        case 'traditional-home':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/traditional-home.jpg")';
+            break;
+        case 'train':
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/train.jpg")';
+            break;
+        default:
+            backgroundElement.style.backgroundImage = 'url("ghibli-bg/painting.jpg")';
+            break;
+    }
+};
 
+// Ensure the DOM is fully loaded before attaching the event listener
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('select[name="bg-image"]').addEventListener('change', backgroundImageSelector);
+});
