@@ -102,6 +102,7 @@ button.active {
     position: fixed;
     top: 0;
     left: -300px;
+    z-index: 999;
     transition: left 0.8 ease-in-out;
 }
 
