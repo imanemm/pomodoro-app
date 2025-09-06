@@ -21,15 +21,32 @@ const circle4 = document.getElementById('circle-4');
 let pomodoroTime = 25;
 let shortBreakTime = 5;
 let longBreakTime =  15;
+let totalSeconds = pomodoroTime * 60;
+
+let initialMinutes = pomodoroTime;
 
 let myInterval;
-let totalSeconds = Number.parseInt(minutesDiv.textContent) * 60;
 let isRunning = false;
 let state = 'pomodoro';
 let nbPomodoro = 0;
 
+let wakeLock = null;
+
 const defaultBackground = 'url("ghibli-bg/painting.jpg")';
 document.body.style.backgroundImage = defaultBackground;
+
+const saveJSON = (key, object) => {
+    localStorage.setItem(key, JSON.stringify(object));
+};
+
+const loadJSON = (key, fallback) => {
+    try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : fallback;
+    } catch {
+        return fallback;
+    }
+}
 
 const timeSettings = () => {
     const pomodoroInput = document.getElementById('pomodoro-length').value;
@@ -42,14 +59,14 @@ const timeSettings = () => {
 
     if (isNaN(pomodoroTime) || isNaN(shortBreakTime) || isNaN(longBreakTime)) {
         alert('Please enter valid numbers for the time settings.');
-        return false; // Indicate failure
+        return false;
     }
     if (pomodoroTime < 1 || shortBreakTime < 1 || longBreakTime < 1) {
         alert('Please enter positive numbers for the time settings.');
-        return false; // Indicate failure
+        return false; 
     }
 
-    return true; // Indicate success
+    return true;
 };
 
 
@@ -78,6 +95,9 @@ const setState = (newState) => {
             break;
     }
     resetTimer();
+
+    totalSeconds = initialMinutes * 60;
+    updateTimerDisplay();
 }
 
 const toggleStateButtons = (disable) => {
@@ -92,6 +112,7 @@ const resetTimer = () => {
     updateTimerDisplay();
     startButton.textContent = 'Start';
     isRunning = false;
+    releaseWakeLock();
 }
 
 const updateTimerDisplay = () => {
@@ -131,6 +152,8 @@ const startTimer = () => {
         }
     }
     , 1000);
+
+    requestWakeLock();
 };
 
 const skipToNextState = () => {
@@ -180,6 +203,7 @@ startButton.addEventListener('click', () => {
         clearInterval(myInterval);
         startButton.textContent = 'Start';
         toggleStateButtons(false);
+        releaseWakeLock();
     }
     else {
         startTimer();
@@ -201,6 +225,7 @@ skipButton.addEventListener('click', () => {
     startButton.textContent = 'Start';
     isRunning = false;
     toggleStateButtons(false);
+    releaseWakeLock();
 });
 
 const settingsButton = document.getElementById('settings');
@@ -210,7 +235,6 @@ saveButton.addEventListener('click', () => {
         return; 
     }
 
-    // Update the timer with the new settings
     if (state === 'pomodoro') {
         initialMinutes = pomodoroTime;
     } else if (state === 'short-break') {
@@ -222,7 +246,21 @@ saveButton.addEventListener('click', () => {
     totalSeconds = initialMinutes * 60;
     updateTimerDisplay();
 
-    // Close the sidebar after saving settings
+    const selectedImage = document.querySelector('select[name="bg-image"]').value;
+    saveJSON('pomodoro:settings', {
+        pomodoroTime,
+        shortBreakTime,
+        longBreakTime,
+        selectedBackground: selectedImage
+    });
+
+    saveJSON('pomodoro:state', {
+        nbPomodoro,
+        state
+    });
+
+    alert('Settings saved!');
+
     const sidebar = document.getElementById('setting-sidebar');
     sidebar.classList.remove('show');
     settingsButton.style.backgroundColor = 'transparent';
@@ -247,8 +285,8 @@ settingsButton.addEventListener('click', toggleSidebar);
 
 const backgroundImageSelector = () => {
     const backgroundElement = document.body;
-
     let selectedImage = document.querySelector('select[name="bg-image"]').value;
+
     switch (selectedImage) {
         case 'country-home':
             backgroundElement.style.backgroundImage = 'url("ghibli-bg/country-home.jpg")';
@@ -278,9 +316,74 @@ const backgroundImageSelector = () => {
             backgroundElement.style.backgroundImage = 'url("ghibli-bg/painting.jpg")';
             break;
     }
+
+    //localStorage.setItem('selectedBackground', selectedImage);
 };
 
-// Ensure the DOM is fully loaded before attaching the event listener
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('select[name="bg-image"]').addEventListener('change', backgroundImageSelector);
+const requestWakeLock = async () => {
+    try {
+        if ('wakeLock' in navigator && !wakeLock) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            wakeLock.addEventListener('release', () => { wakeLock = null; });
+        }
+    } catch (e) {
+        console.warn('Wake Lock not available:', e);
+    }
+};
+
+const releaseWakeLock = async () => {
+    try {
+        if (wakeLock) {
+            await wakeLock.release();
+            wakeLock = null;
+        }
+    } catch (e) {
+        console.warn('Error releasing wake lock:', e);
+    }
+};
+
+window.addEventListener('beforeunload', () => { releaseWakeLock(); });
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && isRunning) requestWakeLock();
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedSettings = loadJSON('pomodoro:settings', null);
+    const savedState = loadJSON('pomodoro:state', null);
+
+    if (savedSettings) {
+        pomodoroTime = savedSettings.pomodoroTime || 25;
+        shortBreakTime = savedSettings.shortBreakTime || 5;
+        longBreakTime = savedSettings.longBreakTime || 15;
+
+        const selectedElement = document.querySelector('select[name="bg-image"]');
+        if (savedSettings.selectedBackground && selectedElement) {
+            selectedElement.value = savedSettings.selectedBackground;
+            backgroundImageSelector();
+        } else {
+            document.body.style.backgroundImage = defaultBackground;
+        }
+
+        if (selectedElement) {
+            selectedElement.addEventListener('change', backgroundImageSelector);
+        }
+
+        document.getElementById('pomodoro-length').value = pomodoroTime;
+        document.getElementById('short-break-length').value = shortBreakTime;
+        document.getElementById('long-break-length').value = longBreakTime;
+    }
+
+    if (savedState) {
+        nbPomodoro = savedState.nbPomodoro || 0;
+        state = savedState.state || 'pomodoro';
+        setState(state);
+        for (let i = 0; i < nbPomodoro % 4; i++) {
+            pomodoroState();
+        }
+    }
+
+    totalSeconds = initialMinutes * 60;
+    updateTimerDisplay();
+});
+
