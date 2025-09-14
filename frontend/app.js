@@ -1,3 +1,5 @@
+import {logSession} from "./api.js"; 
+
 const bells = new Audio('audio/happy_bells.wav');
 bells.load();
 
@@ -100,6 +102,35 @@ const setState = (newState) => {
     updateTimerDisplay();
 }
 
+const kindFromState = (state) => {
+    if (state === 'pomodoro') return 'pomodoro';
+    if (state === 'short-break')  return 'short-break';
+    return 'long-break';
+};
+
+const logCompletedSession = async (finishedState) => {
+    try {
+        const kind = kindFromState(finishedState);
+
+        let minutes;
+        if (finishedState === 'pomodoro') {
+            minutes = pomodoroTime;
+        } else if (finishedState === 'short-break') {
+            minutes = shortBreakTime;
+        } else {
+            minutes = longBreakTime;
+        }
+
+        const durationSec = (Number(minutes) || 0) * 60;
+        if (durationSec > 0) {
+            await logSession({durationSec, kind});
+        }
+        console.log('Logged session', { kind, durationSec });
+    } catch (e) {
+        console.error('Failed to log completed session.', e);
+    }
+};
+
 const toggleStateButtons = (disable) => {
     pomodoroButton.disabled = disable;
     shortBreakButton.disabled = disable;
@@ -124,7 +155,7 @@ const updateTimerDisplay = () => {
 }
 
 const startTimer = () => {
-    myInterval = setInterval(() => {
+    myInterval = setInterval(async () => {
         totalSeconds--;
         updateTimerDisplay();
 
@@ -135,6 +166,9 @@ const startTimer = () => {
             });
 
             clearInterval(myInterval);
+
+            await logCompletedSession(state);
+            document.dispatchEvent(new Event("stats:refresh"));
 
             if (state === 'pomodoro') {
                 nbPomodoro++;

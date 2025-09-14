@@ -129,13 +129,29 @@ label {
 input, select {
     font-family: 'Sour Gummy', sans-serif;
     font-size: 16px;
-    padding: 0;
     border-radius: 15px;
+    padding: 0;
     border: 2px solid #fff;
     background-color: rgba(0, 0, 0, 0.3);
     color: #fff;
     width: 50%;
     text-align: left;
+}
+
+.stats {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    z-index: 10;
+    text-align: center;
+    border: 2px solid white;
+    border-radius: 15px;
+    padding: 2rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.stats button {
+    margin-top: 2rem;
 }
 
 @media screen and (max-width: 768px) {

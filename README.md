@@ -1,22 +1,51 @@
-# Studio Ghibli Pomodoro App 📺
+# Studio Ghibli Pomodoro App ⏳✨
 
-A cute Studio Ghibli-themed Pomodoro web application built with JavaScript, CSS, and HTML.
+A **Studio Ghibli–themed productivity timer** that combines the Pomodoro technique with immersive visuals and session tracking. Designed for focus, balance, and a little bit of magic.
 
-> All image credits belong to Studio Ghibli.
 
-## Features 🛠️
-- 🕒 Focus, Short Break, and Long Break Timers
-- 🎨 Custom background image selection (choose your favorite Ghibli scene!)
-- 🔁 Reset and ⏭️ Skip buttons
-- ⏱️ Set your own focus and break durations
-- 🌙 Minimal and aesthetic user interface
+### Focus Timer
+![Focus Timer Screenshot](screenshots/focus.png)
+---
 
-## How to Use 🕹️
-1. Start a focus Session.
-2. Take a short or long break when the timer ends.
-3. Choose your favorite background for an immersive Studio Ghibli experience!
-4. Enjoy the relaxing Ghibli vibes while studying or working!
+## Tech Stack 💻
+- **Frontend:** HTML, CSS, JavaScript (responsive, interactive UI)
+- **Backend:** Flask + SQLite (REST API for sessions and stats)
+- **Deployment:** GitHub Pages (frontend) + Render (backend)
 
-## Credits 👾
-- Images and characters are the property of Studio Ghibli.
-- This project is fan-made for personal learning and portfolio purposes.
+---
+
+## Features 🚀
+- 🕒 Focus, Short Break, and Long Break modes
+- 🎨 Choose from multiple Studio Ghibli backgrounds
+- ⏱️ Adjustable session durations
+- 🔁 Reset and ⏭️ Skip controls
+- 📊 Stats dashboard: track total focus time and completed sessions
+- 💾 Persistent storage with localStorage + database
+- 🌙 Clean, minimal design with an aesthetic vibe
+
+---
+
+## API Endpoints 🌐
+- `GET /api/health` → check backend status
+- `POST /api/sessions` → save a completed session
+- `GET /api/stats` → retrieve total focus time + number of sessions
+
+---
+
+## Getting Started 🛠️
+1. Clone the repo.
+2. Install backend dependencies:
+```bash
+pip install -r requirements.txt
+```
+3. Run the Flask server:
+``` bash
+flask run
+```
+4. Open the frontend (`index.html`) in your browser.
+
+---
+
+## Credits 🎬
+- Visual assets inspired by **Studio Ghibli** films.
+- Built as a personal learning project and portfolio piece.
