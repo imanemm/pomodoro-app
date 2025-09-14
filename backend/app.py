@@ -64,7 +64,7 @@ def check_health():
 @app.route('/api/sessions', methods=['POST'])
 def create_session():
     try:
-        data = request.get_json(silent=True or {})
+        data = request.get_json(silent=True) or {}
         try:
             duration = int(data.get('duration_sec', 0))
         except:
