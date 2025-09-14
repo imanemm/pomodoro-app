@@ -6,17 +6,29 @@ from flask_cors import CORS
 import os
 
 # My App
+
 app = Flask(__name__)
 
-CORS(app)
+db_url = os.environ.get("DATABASE_URL")
+if db_url:
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql+psycopg://", 1)
+    elif db_url.startswith("postgresql://"):
+        db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///pomodoro.db"
 
-db_path = os.environ.get("DB_PATH", "pomodoro.db")
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 300,
+}
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 CORS(app, resources={r"/api/*": {"origins": [
-    "http://127.0.0.1:5500", "http://localhost:5500",   
-    "https://imanemm.github.io"                         
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "https://imanemm.github.io"
 ]}})
 
 db = SQLAlchemy(app)
@@ -39,9 +51,6 @@ class Session(db.Model):
 
     def __repr__(self):
         return f"<Session {self.id} - {self.kind}, {self.duration_sec}s>"
-
-with app.app_context():
-        db.create_all()
 
 @app.route('/')
 def index():
@@ -96,6 +105,11 @@ def get_stats():
     except Exception as e: 
         return jsonify({'error': str(e)}), 500
 
+@app.route("/api/init-db")
+def init_db():
+    with app.app_context():
+        db.create_all()
+    return {"ok": True}
 
 if __name__ == "__main__":
     app.run(debug=True)
