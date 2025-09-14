@@ -32,6 +32,8 @@ class Session(db.Model):
     def __repr__(self):
         return f"<Session {self.id} - {self.kind}, {self.duration_sec}s>"
 
+with app.app_context():
+        db.create_all()
 
 @app.route('/')
 def index():
@@ -88,7 +90,4 @@ def get_stats():
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-
     app.run(debug=True)
