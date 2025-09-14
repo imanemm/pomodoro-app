@@ -105,11 +105,5 @@ def get_stats():
     except Exception as e: 
         return jsonify({'error': str(e)}), 500
 
-@app.route("/api/init-db")
-def init_db():
-    with app.app_context():
-        db.create_all()
-    return {"ok": True}
-
 if __name__ == "__main__":
     app.run(debug=True)
