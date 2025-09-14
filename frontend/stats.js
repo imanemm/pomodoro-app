@@ -1,5 +1,3 @@
-import { fetchStats } from "./api.js";
-
 const viewStatsBtn = document.getElementById("viewStatsBtn");
 const statsMinutes = document.getElementById("total-time");
 const statsSessions = document.getElementById("total-pomodoros");
@@ -8,7 +6,7 @@ viewStatsBtn.addEventListener("click", async () => {
     viewStatsBtn.textContent = "Loading...";
 
     try {
-        const session = await fetchStats();
+        const session = await window.fetchStats();
         const minutes = session.total_focus_min;
         statsSessions.textContent = `${session.total_sessions}`;
         statsMinutes.textContent = `${minutes}`;
@@ -22,8 +20,8 @@ viewStatsBtn.addEventListener("click", async () => {
 
 document.addEventListener("stats:refresh", async () => {
   try {
-    const s = await fetchStats();
-    totalPomodoros.textContent = s.total_sessions;
-    totalTime.textContent = s.total_focus_min;
+    const s = await window.fetchStats();
+    statsSessions.textContent = s.total_sessions;
+    statsMinutes.textContent = s.total_focus_min;
   } catch {}
 });

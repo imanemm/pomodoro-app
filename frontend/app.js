@@ -1,5 +1,3 @@
-import {logSession} from "./api.js"; 
-
 const bells = new Audio('audio/happy_bells.wav');
 bells.load();
 
@@ -123,7 +121,7 @@ const logCompletedSession = async (finishedState) => {
 
         const durationSec = (Number(minutes) || 0) * 60;
         if (durationSec > 0) {
-            await logSession({durationSec, kind});
+            await window.logSession({durationSec, kind});
         }
         console.log('Logged session', { kind, durationSec });
     } catch (e) {
