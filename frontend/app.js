@@ -299,7 +299,7 @@ saveButton.addEventListener('click', () => {
     settingsButton.style.color = '#fff';
 });
 
-function toggleSidebar() {
+const toggleSidebar  = () => {
     const sidebar = document.getElementById('setting-sidebar');
 
     const sidebarisOpen = sidebar.classList.toggle('show');

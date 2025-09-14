@@ -138,11 +138,16 @@ input, select {
     text-align: left;
 }
 
-.stats {
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
+#stats {
+    position: fixed;
+    top: 0;
+    right: -25%;
+    width: 25%;
+    height: 100vh;
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     text-align: center;
     border: 2px solid white;
     border-radius: 15px;
@@ -150,8 +155,29 @@ input, select {
     background: rgba(0, 0, 0, 0.3);
 }
 
-.stats button {
+#stats.show {
+    right: 0;
+}
+
+.stats-button {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
     margin-top: 2rem;
+    z-index: 20;
+}
+
+#closeStatsBtn {
+    border: 1px solid white;
+    border-radius: 15px;
+    width: 30%;
+    margin: 2rem auto;
+}
+
+#closeStatsBtn:hover {
+    transition: color ease-in-out 0.3s;
+    background-color: #fff;
+    color: #000;
 }
 
 @media screen and (max-width: 768px) {
@@ -160,8 +186,15 @@ input, select {
         left: -100%;
         background-color: rgba(0, 0, 0, 1);
     }
+
     #setting-sidebar.show {
         left: 0;
+    }
+
+    #stats {
+        width: 100%;
+        right: -100%;
+        background-color: rgba(0, 0, 0, 1);
     }
 
     .timer-display {
@@ -218,6 +251,12 @@ input, select {
 
 @media screen and (max-width: 1024px) and (min-width: 769px) {
     #setting-sidebar {
+        width: 100%;
+        left: -100%;
+        background-color: rgba(0, 0, 0, 1);
+    }
+
+    #stats {
         width: 100%;
         left: -100%;
         background-color: rgba(0, 0, 0, 1);
