@@ -1,2 +1,2 @@
-export const API_BASE = "http://127.0.0.1:5000";
+window.APP_CONFIG = { API_BASE: "https://pomodoro-app-n5jf.onrender.com" };
 
