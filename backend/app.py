@@ -3,14 +3,22 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_cors import CORS
+import os
 
 # My App
 app = Flask(__name__)
 
 CORS(app)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///pomodoro.db'
+db_path = os.environ.get("DB_PATH", "pomodoro.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 
+
+CORS(app, resources={r"/api/*": {"origins": [
+    "http://127.0.0.1:5500", "http://localhost:5500",   
+    "https://imanemm.github.io"                         
+]}})
+
 db = SQLAlchemy(app)
 
 
