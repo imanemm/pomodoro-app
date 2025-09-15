@@ -31,6 +31,7 @@ let state = 'pomodoro';
 let nbPomodoro = 0;
 
 let wakeLock = null;
+let endTimestamp = null; 
 
 const defaultBackground = 'url("ghibli-bg/painting.jpg")';
 document.body.style.backgroundImage = defaultBackground;
@@ -137,8 +138,11 @@ const toggleStateButtons = (disable) => {
 
 const resetTimer = () => {
     clearInterval(myInterval);
+    endTimestamp = null;
+
     totalSeconds = initialMinutes * 60;
     updateTimerDisplay();
+
     startButton.textContent = 'Start';
     isRunning = false;
     releaseWakeLock();
@@ -153,18 +157,28 @@ const updateTimerDisplay = () => {
 }
 
 const startTimer = () => {
-    myInterval = setInterval(async () => {
-        totalSeconds--;
+    endTimestamp = Date.now() + totalSeconds * 1000;
+    myInterval = setInterval(tick, 250);
+
+    requestWakeLock();
+};
+
+const tick = () => {
+    const remainingMs = endTimestamp - Date.now();
+    const remainingSec = Math.ceil(remainingMs/1000);
+
+    if (remainingSec <= 0) {
+        totalSeconds = 0;
         updateTimerDisplay();
 
-        if (totalSeconds <= 0) {
-            console.log('Playing bell sound');
-            bells.play().catch((error) => {
-                console.error('Audio playback permission denied', error);
-            });
+        clearInterval(myInterval);
+        endTimestamp = null;
 
-            clearInterval(myInterval);
+        bells.play().catch((error) => {
+            console.error('Audio playback permission denied', error);
+        });
 
+        (async () => {
             await logCompletedSession(state);
             document.dispatchEvent(new Event("stats:refresh"));
 
@@ -181,15 +195,18 @@ const startTimer = () => {
                 setState('pomodoro');
             }
             startTimer();
-        }
+        })();
+        return;
     }
-    , 1000);
 
-    requestWakeLock();
+    totalSeconds = remainingSec;
+    updateTimerDisplay();
 };
 
 const skipToNextState = () => {
     clearInterval(myInterval);
+    endTimestamp = null;
+
     if (state === 'pomodoro') {
         nbPomodoro++;
         pomodoroState();
@@ -232,7 +249,13 @@ startButton.addEventListener('click', () => {
         bells.currentTime = 0;
     }
     if (isRunning) {
+        if (endTimestamp) {
+            const remainingMs = endTimestamp - Date.now();
+            totalSeconds = Math.max(0, Math.ceil(remainingMs/1000));
+        }
         clearInterval(myInterval);
+        endTimestamp = null;
+
         startButton.textContent = 'Start';
         toggleStateButtons(false);
         releaseWakeLock();
@@ -242,6 +265,7 @@ startButton.addEventListener('click', () => {
         startButton.textContent = 'Pause';
         toggleStateButtons(true);
     }
+
     isRunning = !isRunning;
 });
 
@@ -277,6 +301,10 @@ saveButton.addEventListener('click', () => {
 
     totalSeconds = initialMinutes * 60;
     updateTimerDisplay();
+
+    if (isRunning && endTimestamp) {
+        endTimestamp = Date.now() + totalSeconds * 1000;
+    };
 
     const selectedImage = document.querySelector('select[name="bg-image"]').value;
     saveJSON('pomodoro:settings', {
